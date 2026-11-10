@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Calendar Widgets</string>
+    <string name="widget_settings">Widget settings</string>
+    <string name="widget_up_next">Up next</string>
+    <string name="widget_up_next_description">Your next event with a countdown</string>
+    <string name="widget_agenda">Agenda</string>
+    <string name="widget_agenda_description">Today\'s date and your upcoming events</string>
+    <string name="widget_month">Month</string>
+    <string name="widget_month_description">Month calendar with event dots</string>
+</resources>
