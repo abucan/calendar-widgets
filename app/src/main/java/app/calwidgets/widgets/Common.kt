@@ -50,6 +50,8 @@ data class Palette(
     /** Weekday label, today marker, navigation arrows. */
     val accent: ColorProvider,
     val onAccent: ColorProvider,
+    /** Dividers and quiet button backgrounds. */
+    val subtle: ColorProvider,
 )
 
 @Composable
@@ -61,6 +63,7 @@ fun palette(style: WidgetStyle): Palette = when (style) {
         textSecondary = GlanceTheme.colors.onSurfaceVariant,
         accent = GlanceTheme.colors.primary,
         onAccent = GlanceTheme.colors.onPrimary,
+        subtle = GlanceTheme.colors.secondaryContainer,
     )
     WidgetStyle.IOS -> Palette(
         background = dayNight(Color.White, Color(0xFF1C1C1E)),
@@ -68,6 +71,7 @@ fun palette(style: WidgetStyle): Palette = when (style) {
         textSecondary = dayNight(Color(0xFF8A8A8E), Color(0xFF98989F)),
         accent = dayNight(Color(0xFFFF3B30), Color(0xFFFF453A)),
         onAccent = dayNight(Color.White, Color.White),
+        subtle = dayNight(Color(0xFFE5E5EA), Color(0xFF3A3A3C)),
     )
 }
 

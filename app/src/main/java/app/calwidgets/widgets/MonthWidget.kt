@@ -53,11 +53,11 @@ class MonthWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val prefs = getAppWidgetState(context, PreferencesGlanceStateDefinition, id)
-        val initial = loadWidgetData(context, prefs, monthView = true)
+        val initial = loadWidgetData(context, prefs, WidgetRange.MONTH)
         provideContent {
             WidgetFrame(
                 initial = initial,
-                load = { loadWidgetData(context, it, monthView = true) },
+                load = { loadWidgetData(context, it, WidgetRange.MONTH) },
                 padding = 10.dp,
             ) { data, palette, style ->
                 MonthContent(data, palette, style)

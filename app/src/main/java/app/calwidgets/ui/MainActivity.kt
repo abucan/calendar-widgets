@@ -112,7 +112,7 @@ private fun MainScreen() {
         Section("2. Add a widget") {
             Text(
                 "Touch and hold an empty spot on the home screen, tap Widgets, find Calendar Widgets and " +
-                    "drag Up next, Agenda or Month onto the screen. Drag the handles to resize.",
+                    "drag Up next, Agenda, Week or Month onto the screen. Drag the handles to resize.",
             )
         }
 

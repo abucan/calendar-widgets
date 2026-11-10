@@ -8,6 +8,7 @@ has no internet permission and events never leave the phone.
 |---|---|---|
 | Up next | 2×2 | Today's date and the next event with a countdown |
 | Agenda | 4×2 | Today's date and a scrolling list of the next week's events |
+| Week | 4×3 | Date header, this week's days and the selected day's events; tap a day to see it, **+** adds an event |
 | Month | 4×3 | Month grid with event dots; arrows change month, the title returns to today |
 
 Every widget has two styles, chosen per widget: **Android** (wallpaper colours,

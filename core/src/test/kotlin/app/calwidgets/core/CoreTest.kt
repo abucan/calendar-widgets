@@ -77,6 +77,24 @@ class CoreTest {
         )
     }
 
+    @Test
+    fun weekOfStartsOnChosenWeekdayAndCrossesMonths() {
+        // Tuesday 1 Dec 2026.
+        val day = LocalDate.of(2026, 12, 1)
+        val monday = weekOf(day, DayOfWeek.MONDAY)
+        assertEquals(LocalDate.of(2026, 11, 30), monday.first())
+        assertEquals(LocalDate.of(2026, 12, 6), monday.last())
+        assertEquals(7, monday.size)
+
+        val sunday = weekOf(day, DayOfWeek.SUNDAY)
+        assertEquals(LocalDate.of(2026, 11, 29), sunday.first())
+
+        // A day that is itself the first day of the week.
+        assertEquals(LocalDate.of(2026, 11, 30), weekOf(LocalDate.of(2026, 11, 30), DayOfWeek.MONDAY).first())
+        // The last day of the week stays in the same week.
+        assertEquals(LocalDate.of(2026, 11, 30), weekOf(LocalDate.of(2026, 12, 6), DayOfWeek.MONDAY).first())
+    }
+
     // --- days an event covers ---
 
     @Test

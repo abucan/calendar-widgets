@@ -55,6 +55,18 @@
         </receiver>
 
         <receiver
+            android:name=".widgets.WeekReceiver"
+            android:exported="true"
+            android:label="@string/widget_week">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_week" />
+        </receiver>
+
+        <receiver
             android:name=".widgets.MonthReceiver"
             android:exported="true"
             android:label="@string/widget_month">

@@ -23,6 +23,7 @@ import app.calwidgets.data.CalendarRepository
 import app.calwidgets.widgets.AgendaWidget
 import app.calwidgets.widgets.MonthWidget
 import app.calwidgets.widgets.UpNextWidget
+import app.calwidgets.widgets.WeekWidget
 import app.calwidgets.widgets.WidgetKeys
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,7 @@ object WidgetRefresh {
     private const val MINUTE = 60_000L
 
     private val widgets: List<GlanceAppWidget>
-        get() = listOf(UpNextWidget(), AgendaWidget(), MonthWidget())
+        get() = listOf(UpNextWidget(), AgendaWidget(), WeekWidget(), MonthWidget())
 
     /** Redraws every placed widget with fresh calendar data. */
     suspend fun updateAll(context: Context) {

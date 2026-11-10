@@ -43,9 +43,9 @@ class AgendaWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val prefs = getAppWidgetState(context, PreferencesGlanceStateDefinition, id)
-        val initial = loadWidgetData(context, prefs, monthView = false)
+        val initial = loadWidgetData(context, prefs, WidgetRange.UPCOMING)
         provideContent {
-            WidgetFrame(initial, load = { loadWidgetData(context, it, monthView = false) }) { data, palette, style ->
+            WidgetFrame(initial, load = { loadWidgetData(context, it, WidgetRange.UPCOMING) }) { data, palette, style ->
                 AgendaContent(data, palette, style)
             }
         }

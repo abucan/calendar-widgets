@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import app.calwidgets.core.CalendarEvent
+import app.calwidgets.core.weekOf
 import app.calwidgets.data.CalendarRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,6 +30,9 @@ object WidgetKeys {
     /** Months away from the current month shown by the month widget. */
     val MONTH_OFFSET = intPreferencesKey("month_offset")
 
+    /** Day shown by the week widget, as an epoch day; ignored once it is outside the current week. */
+    val SELECTED_DAY = longPreferencesKey("selected_day")
+
     /** Changed on every refresh so the widget reloads its events. */
     val TICK = longPreferencesKey("tick")
 }
@@ -48,30 +52,45 @@ data class WidgetData(
     val use24h: Boolean,
     val firstDayOfWeek: DayOfWeek,
     val month: YearMonth,
+    /** Day whose events the week widget lists; always within the current week. */
+    val selectedDay: LocalDate,
     val events: List<CalendarEvent>,
 )
 
 /** How many days ahead the Up next and Agenda widgets look. */
 const val DAYS_AHEAD = 7L
 
-/**
- * Loads events for a widget. With [monthView] the range is the month selected
- * in [prefs], including the days of neighbouring months shown in the grid;
- * otherwise it is today and the following [DAYS_AHEAD] days.
- */
-suspend fun loadWidgetData(context: Context, prefs: Preferences, monthView: Boolean): WidgetData =
+/** Which days a widget needs events for. */
+enum class WidgetRange {
+    /** Today and the following [DAYS_AHEAD] days. */
+    UPCOMING,
+
+    /** The month selected in the widget, including the neighbouring days shown in its grid. */
+    MONTH,
+
+    /** The whole current week. */
+    WEEK,
+}
+
+/** Loads the events of [range] for a widget whose stored settings are [prefs]. */
+suspend fun loadWidgetData(context: Context, prefs: Preferences, range: WidgetRange): WidgetData =
     withContext(Dispatchers.IO) {
         val zone = ZoneId.systemDefault()
         val now = System.currentTimeMillis()
         val today = Instant.ofEpochMilli(now).atZone(zone).toLocalDate()
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
         val month = YearMonth.from(today).plusMonths((prefs[WidgetKeys.MONTH_OFFSET] ?: 0).toLong())
-        val (from, to) = if (monthView) {
+        val week = weekOf(today, firstDayOfWeek)
+        val selectedDay = prefs[WidgetKeys.SELECTED_DAY]
+            ?.let { LocalDate.ofEpochDay(it) }
+            ?.takeIf { it in week }
+            ?: today
+        val (from, to) = when (range) {
+            WidgetRange.UPCOMING -> today to today.plusDays(DAYS_AHEAD)
             // The grid also shows the tail of the previous and the start of the next month.
-            val first = minOf(month.atDay(1).minusDays(6), today)
-            val last = maxOf(month.atEndOfMonth().plusDays(6), today)
-            first to last
-        } else {
-            today to today.plusDays(DAYS_AHEAD)
+            WidgetRange.MONTH ->
+                minOf(month.atDay(1).minusDays(6), today) to maxOf(month.atEndOfMonth().plusDays(6), today)
+            WidgetRange.WEEK -> week.first() to week.last()
         }
         WidgetData(
             hasPermission = CalendarRepository.hasPermission(context),
@@ -79,8 +98,9 @@ suspend fun loadWidgetData(context: Context, prefs: Preferences, monthView: Bool
             zone = zone,
             today = today,
             use24h = DateFormat.is24HourFormat(context),
-            firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek,
+            firstDayOfWeek = firstDayOfWeek,
             month = month,
+            selectedDay = selectedDay,
             events = CalendarRepository.events(context, from, to, zone, prefs.hiddenCalendars()),
         )
     }

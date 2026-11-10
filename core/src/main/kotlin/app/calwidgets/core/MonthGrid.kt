@@ -1,6 +1,7 @@
 package app.calwidgets.core
 
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 
 /**
@@ -24,3 +25,10 @@ fun monthGrid(month: YearMonth, firstDayOfWeek: DayOfWeek): List<List<DayCell>> 
 /** The seven weekdays in display order, starting on [firstDayOfWeek]. */
 fun weekdayOrder(firstDayOfWeek: DayOfWeek): List<DayOfWeek> =
     List(7) { firstDayOfWeek.plus(it.toLong()) }
+
+/** The seven days of the week containing [day], starting on [firstDayOfWeek]. */
+fun weekOf(day: LocalDate, firstDayOfWeek: DayOfWeek): List<LocalDate> {
+    val back = (day.dayOfWeek.value - firstDayOfWeek.value + 7) % 7
+    val start = day.minusDays(back.toLong())
+    return List(7) { start.plusDays(it.toLong()) }
+}
